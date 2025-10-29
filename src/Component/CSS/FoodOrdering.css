@@ -104,7 +104,7 @@
     color: #1976d2;
 }
 
-/* 响应式设计 */
+
 @media (max-width: 768px) {
     .MuiTableCell-root {
         padding: 12px !important;
@@ -116,7 +116,6 @@
     }
 }
 
-/* 动画效果 */
 @keyframes fadeIn {
     from {
         opacity: 0;
