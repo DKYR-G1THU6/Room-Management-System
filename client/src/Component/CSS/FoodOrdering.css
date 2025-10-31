@@ -1,0 +1,139 @@
+.food-ordering-container {
+    padding: 20px;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.MuiTableContainer-root {
+    animation: slideIn 0.3s ease-out;
+    transition: all 0.3s ease;
+}
+
+.MuiTableRow-root {
+    transition: background-color 0.2s ease;
+}
+
+.MuiTableCell-root {
+    padding: 16px !important;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.room-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.button-group button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: none;
+    min-width: 90px;
+    transition: all 0.2s ease;
+}
+
+.button-group button:hover {
+    transform: translateY(-2px);
+}
+
+.food-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.food-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.food-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.food-price {
+    font-weight: 500;
+    color: #666;
+}
+
+.total-section {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.total-amount {
+    text-align: right;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1976d2;
+}
+
+
+@media (max-width: 768px) {
+    .MuiTableCell-root {
+        padding: 12px !important;
+    }
+    
+    .MuiButton-root {
+        padding: 6px 8px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
