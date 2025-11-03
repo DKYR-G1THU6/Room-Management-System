@@ -56,7 +56,6 @@ const GET_ORDERS = gql`
   }
 `;
 
-
 const UPDATE_ORDER_STATUS = gql`
   mutation UpdateOrderStatus($id: ID!, $status: String!) {
     updateOrderStatus(id: $id, status: $status) {
@@ -66,15 +65,33 @@ const UPDATE_ORDER_STATUS = gql`
   }
 `;
 
-
 const BULK_UPDATE_STATUS = gql`
   mutation BulkUpdateStatus($ids: [ID!]!, $status: String!) {
     bulkUpdateStatus(ids: $ids, status: $status)
   }
 `;
 
+// Map order status to a small colored Chip
+const getStatusChip = (status) => {
+  const map = {
+    pending: { color: 'warning', label: 'Pending' },
+    preparing: { color: 'info', label: 'Preparing' },
+    delivered: { color: 'success', label: 'Delivered' },
+    cancelled: { color: 'error', label: 'Cancelled' },
+    'In Progress': { color: 'info', label: 'In Progress' },
+    Delivering: { color: 'primary', label: 'Delivering' },
+    Canceled: { color: 'error', label: 'Canceled' },
+  };
+  const key = status in map ? status : String(status || '').toLowerCase();
+  const config = map[status] || map[key] || { color: 'default', label: status };
+  return <Chip label={config.label} color={config.color} size="small" />;
+};
+
 const FoodOrdering = ({ drawerOpen }) => {
+  // searchTerm: 提交后的搜索词（用于触发查询）
+  // searchInput: 输入框里的即时内容（按回车/按钮后再提交到 searchTerm）
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [sortField, setSortField] = useState('room');
   const [sortDirection, setSortDirection] = useState('asc');
   const [page, setPage] = useState(0);
@@ -91,17 +108,15 @@ const FoodOrdering = ({ drawerOpen }) => {
   });
 
   const orders = data?.orders || [];
-
   
   const [updateStatus] = useMutation(UPDATE_ORDER_STATUS, {
-    // 突变成功后，重新获取订单列表以更新 UI
+   
     refetchQueries: [{ query: GET_ORDERS, variables: { 
       search: searchTerm, 
       sortBy: sortField, 
       sortDirection: sortDirection 
     } }],
   });
-  
   
   const [bulkUpdate] = useMutation(BULK_UPDATE_STATUS, {
     refetchQueries: [{ query: GET_ORDERS, variables: { 
@@ -110,9 +125,11 @@ const FoodOrdering = ({ drawerOpen }) => {
       sortDirection: sortDirection 
     } }],
   });
-  
 
-  
+  const commitSearch = () => {
+    setPage(0);
+    setSearchTerm(searchInput);
+  };
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -130,17 +147,6 @@ const FoodOrdering = ({ drawerOpen }) => {
     return data.orders; 
    
   }, [loading, error, data]);
-
-  const getStatusChip = (status) => {
-    const statusConfig = {
-      pending: { color: 'warning', label: 'In Progress' },
-      preparing: { color: 'info', label: 'Preparing' },
-      delivered: { color: 'success', label: 'Delivering' },
-      cancelled: { color: 'error', label: 'Cancelled' }
-    };
-    const config = statusConfig[status] || { color: 'default', label: status };
-    return <Chip label={config.label} color={config.color} size="small" />;
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -195,8 +201,6 @@ const FoodOrdering = ({ drawerOpen }) => {
      );
   }
 
-  
-
   return (
     <Main open={drawerOpen} sx={{ p: '0 !important' }}>
       <Box sx={{ 
@@ -236,8 +240,9 @@ const FoodOrdering = ({ drawerOpen }) => {
               variant="outlined"
               size="small"
               placeholder="Search room number or food..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') commitSearch(); }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -247,6 +252,13 @@ const FoodOrdering = ({ drawerOpen }) => {
               }}
               sx={{ width: 300 }}
             />
+            <Button
+              variant="contained"
+              size="small"
+              onClick={commitSearch}
+            >
+              Search
+            </Button>
           </Box>
           <Button
             variant="contained"

@@ -16,7 +16,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql', // 👈 你的 GraphQL 服务器 URL
+  uri: 'http://localhost:4000/graphql', 
   cache: new InMemoryCache(),
 });
 

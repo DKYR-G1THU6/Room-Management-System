@@ -1,169 +1,10 @@
+import "reflect-metadata";
+import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-//test
-let rooms = [
-    { id: "1", RoomNo: 101, Location: 'Level 1', Description: 'A nice room' },
-    { id: "2", RoomNo: 102, Location: 'Level 1', Description: 'A luxurious room' },
-    { id: "3", RoomNo: 301, Location: 'Level 3', Description: 'A cozy room' },
-    { id: "4", RoomNo: 201, Location: 'Level 2', Description: 'A simple room' },
-    { id: "5", RoomNo: 302, Location: 'Level 3', Description: 'A grand room' },
-    { id: "6", RoomNo: 103, Location: 'Level 1', Description: 'A mysterious room' },
-    { id: "7", RoomNo: 202, Location: 'Level 2', Description: 'A spacious room' },
-    { id: "8", RoomNo: 104, Location: 'Level 1', Description: 'A cozy room' },
-    { id: "9", RoomNo: 303, Location: 'Level 3', Description: 'A luxurious room' },
-];
-
-let orders = [
-   {
-    "id": "1",
-    "room": "101",
-    "items": [
-      { "name": "Large Pepperoni Pizza", "price": 18.50 },
-      { "name": "Coke Zero (Can)", "price": 3.00 }
-    ],
-    "status": "pending",
-    "timestamp": "2025-10-28T10:30:00"
-  },
-  {
-    "id": "2",
-    "room": "201",
-    "items": [
-      { "name": "Spaghetti Carbonara", "price": 15.99 },
-      { "name": "Caesar Salad (Side)", "price": 6.50 }
-    ],
-    "status": "delivered",
-    "timestamp": "2025-10-28T10:15:00"
-  },
-  {
-    "id": "3",
-    "room": "303",
-    "items": [
-      { "name": "Grilled Salmon", "price": 28.00 },
-      { "name": "White Wine (Bottle)", "price": 45.00 }
-    ],
-    "status": "preparing",
-    "timestamp": "2025-10-28T10:45:00"
-  },
-  {
-    "id": "4",
-    "room": "110",
-    "items": [
-      { "name": "Espresso Shot", "price": 3.50 },
-      { "name": "Blueberry Muffin", "price": 4.50 },
-      { "name": "Orange Juice (Fresh)", "price": 6.00 }
-    ],
-    "status": "pending",
-    "timestamp": "2025-10-28T10:50:00"
-  },
-  {
-    "id": "5",
-    "room": "408",
-    "items": [
-      { "name": "Club Sandwich", "price": 14.00 },
-      { "name": "Fries (Side)", "price": 4.50 }
-    ],
-    "status": "preparing",
-    "timestamp": "2025-10-28T10:20:00"
-  },
-  {
-    "id": "6",
-    "room": "215",
-    "items": [
-      { "name": "Local Craft Beer (2)", "price": 15.00 },
-      { "name": "Nachos Grande", "price": 12.50 }
-    ],
-    "status": "delivered",
-    "timestamp": "2025-10-28T09:40:00"
-  },
-  {
-    "id": "7",
-    "room": "502",
-    "items": [
-      { "name": "Chocolate Cake Slice", "price": 8.00 }
-    ],
-    "status": "pending",
-    "timestamp": "2025-10-28T11:05:00"
-  },
-  {
-    "id": "8",
-    "room": "312",
-    "items": [
-      { "name": "Still Water (Large)", "price": 4.00 },
-      { "name": "Mixed Nuts Platter", "price": 9.00 }
-    ],
-    "status": "cancelled",
-    "timestamp": "2025-10-28T09:00:00"
-  },
-  {
-    "id": "9",
-    "room": "401",
-    "items": [
-      { "name": "Breakfast Burrito", "price": 11.50 },
-      { "name": "Black Coffee", "price": 3.00 }
-    ],
-    "status": "preparing",
-    "timestamp": "2025-10-28T11:00:00"
-  },
-  {
-    "id": "10",
-    "room": "105",
-    "items": [
-      { "name": "Ice Cream (Vanilla)", "price": 6.50 },
-      { "name": "Hot Tea (Green)", "price": 4.00 }
-    ],
-    "status": "pending",
-    "timestamp": "2025-10-28T11:15:00"
-  },
-  {
-    "id": "11",
-    "room": "510",
-    "items": [
-      { "name": "Cheeseburger (Well Done)", "price": 16.50 },
-      { "name": "Milkshake (Chocolate)", "price": 7.00 }
-    ],
-    "status": "preparing",
-    "timestamp": "2025-10-28T11:20:00"
-  },
-  {
-    "id": "12",
-    "room": "208",
-    "items": [
-      { "name": "Fruit Platter", "price": 18.00 }
-    ],
-    "status": "delivered",
-    "timestamp": "2025-10-28T09:30:00"
-  },
-  {
-    "id": "13",
-    "room": "315",
-    "items": [
-      { "name": "Omelette (Cheese & Ham)", "price": 10.99 },
-      { "name": "Toast (2 Slices)", "price": 2.00 }
-    ],
-    "status": "pending",
-    "timestamp": "2025-10-28T11:35:00"
-  },
-  {
-    "id": "14",
-    "room": "405",
-    "items": [
-      { "name": "Sushi Set (Chef's Choice)", "price": 35.00 }
-    ],
-    "status": "cancelled",
-    "timestamp": "2025-10-28T10:00:00"
-  },
-  {
-    "id": "15",
-    "room": "509",
-    "items": [
-      { "name": "Glass of Champagne", "price": 18.00 },
-      { "name": "Strawberries (Side)", "price": 7.00 }
-    ],
-    "status": "preparing",
-    "timestamp": "2025-10-28T11:40:00"
-  }
-
-];
+import { In } from "typeorm";
+import { AppDataSource } from "./data-source.js";
+dotenv.config();
 
 
 const typeDefs = `
@@ -197,6 +38,7 @@ const typeDefs = `
     addRoom(RoomNo: Int!, Location: String!, Description: String!): Room!
     updateRoom(id: ID!, RoomNo: Int!, Location: String!, Description: String!): Room!
     deleteRooms(ids: [ID!]!): Boolean
+    
     updateOrderStatus(id: ID!, status: String!): Order!
     bulkUpdateStatus(ids: [ID!]!, status: String!): Boolean
   }
@@ -205,84 +47,124 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    rooms: () => rooms,
-    orders: (parent, { search, sortBy, sortDirection }) => {
-      let result = [...orders];
+    rooms: async () => {
+      const repo = AppDataSource.getRepository("Room");
+      const rows = await repo.find({ order: { id: "ASC" } });
+      return rows.map(r => ({
+        id: String(r.id),
+        RoomNo: r.roomNo,
+        Location: r.location,
+        Description: r.description ?? "",
+      }));
+    },
+    orders: async (_parent, { search, sortBy, sortDirection }) => {
+      const orderRepo = AppDataSource.getRepository("Order");
+      const itemRepo = AppDataSource.getRepository("OrderItem");
+
+      const orders = await orderRepo.find();
+      const orderIds = orders.map(o => o.id);
+      const items = orderIds.length
+        ? await itemRepo.find({ where: { order_id: In(orderIds) } })
+        : [];
+
+      // group items by order_id
+      const itemsByOrder = new Map();
+      for (const it of items) {
+        const list = itemsByOrder.get(it.order_id) ?? [];
+        list.push({ name: it.item_name, price: parseFloat(it.price) });
+        itemsByOrder.set(it.order_id, list);
+      }
+
+      let result = orders.map(o => ({
+        id: String(o.id),
+        room: String(o.room ?? ""),
+        items: itemsByOrder.get(o.id) ?? [],
+        status: o.status,
+        timestamp: o.timestamp instanceof Date ? o.timestamp.toISOString() : String(o.timestamp),
+      }));
+
       if (search) {
-        const searchLower = search.toLowerCase();
-        result = result.filter(order => 
-          order.room.includes(search) || order.items.some(item => item.name.toLowerCase().includes(searchLower))
+        const s = String(search).toLowerCase();
+        result = result.filter(ord =>
+          String(ord.room).toLowerCase().includes(s) || ord.items.some(it => (it.name || "").toLowerCase().includes(s))
         );
       }
 
       if (sortBy) {
         result.sort((a, b) => {
-          let comparison = 0;
-          
-          if (sortBy === 'room') {
-            comparison = a.room.localeCompare(b.room);
-          } else if (sortBy === 'time') {
-            comparison = new Date(a.timestamp) - new Date(b.timestamp);
-          } else if (sortBy === 'total') {
-            const totalA = a.items.reduce((sum, item) => sum + item.price, 0);
-            const totalB = b.items.reduce((sum, item) => sum + item.price, 0);
-            comparison = totalA - totalB;
+          let cmp = 0;
+          if (sortBy === "room") {
+            const roomA = String(a.room ?? "");
+            const roomB = String(b.room ?? "");
+           
+            cmp = roomA.localeCompare(roomB, undefined, { numeric: true, sensitivity: "base" });
+          } else if (sortBy === "time") {
+            cmp = new Date(a.timestamp) - new Date(b.timestamp);
+          } else if (sortBy === "total") {
+            const ta = a.items.reduce((sum, it) => sum + (it.price || 0), 0);
+            const tb = b.items.reduce((sum, it) => sum + (it.price || 0), 0);
+            cmp = ta - tb;
           }
-          
-          return sortDirection === 'asc' ? comparison : -comparison;
+          return sortDirection === "asc" ? cmp : -cmp;
         });
       }
 
       return result;
-      },
+    },
   },
 
   Mutation: {
-    addRoom: (_, { RoomNo, Location, Description }) => {
-      const newRoom = {
-        id: rooms.length + 1,
-        RoomNo,
-        Location,
-        Description,
+    addRoom: async (_p, { RoomNo, Location, Description }) => {
+      const repo = AppDataSource.getRepository("Room");
+      const entity = repo.create({ roomNo: String(RoomNo), location: Location, description: Description });
+      const saved = await repo.save(entity);
+      return { id: String(saved.id), RoomNo: saved.roomNo, Location: saved.location, Description: saved.description ?? "" };
+    },
+
+    updateRoom: async (_p, { id, RoomNo, Location, Description }) => {
+      const repo = AppDataSource.getRepository("Room");
+      const key = { id: Number(id) };
+      await repo.update(key, { roomNo: String(RoomNo), location: Location, description: Description });
+      const updated = await repo.findOne({ where: key });
+      if (!updated) throw new Error("Room not found");
+      return { id: String(updated.id), RoomNo: updated.roomNo, Location: updated.location, Description: updated.description ?? "" };
+    },
+
+    deleteRooms: async (_p, { ids }) => {
+      const repo = AppDataSource.getRepository("Room");
+      const numericIds = ids.map(i => Number(i));
+      await repo.delete(numericIds);
+      return true;
+    },
+
+    updateOrderStatus: async (_p, { id, status }) => {
+      const orderRepo = AppDataSource.getRepository("Order");
+      const itemRepo = AppDataSource.getRepository("OrderItem");
+      const key = { id: Number(id) };
+      await orderRepo.update(key, { status });
+      const o = await orderRepo.findOne({ where: key });
+      if (!o) throw new Error("Order not found");
+      const its = await itemRepo.find({ where: { order_id: o.id } });
+      return {
+        id: String(o.id),
+        room: o.room,
+        status: o.status,
+        timestamp: o.timestamp instanceof Date ? o.timestamp.toISOString() : String(o.timestamp),
+        items: its.map(it => ({ name: it.item_name, price: parseFloat(it.price) })),
       };
-      rooms.push(newRoom);
-      return newRoom;
     },
 
-    updateRoom: (_, { id, RoomNo, Location, Description }) => {
-      const index = rooms.findIndex((r) => r.id === id);
-      if (index === -1) throw new Error("Room not found");
-      const updated = { id, RoomNo, Location, Description };
-      rooms[index] = updated;
-      return updated;
-    },
-
-    deleteRooms: (_, { ids }) => {
-      rooms = rooms.filter((r) => !ids.includes(r.id));
+    bulkUpdateStatus: async (_p, { ids, status }) => {
+      const orderRepo = AppDataSource.getRepository("Order");
+      const numericIds = ids.map(i => Number(i));
+      if (numericIds.length === 0) return true;
+      await orderRepo.createQueryBuilder()
+        .update()
+        .set({ status })
+        .whereInIds(numericIds)
+        .execute();
       return true;
     },
-
-    updateOrderStatus: (_, { id, status }) => {
-      const orderId = String(id);
-      const orderIndex = orders.findIndex(o => o.id === orderId);
-      
-      if (orderIndex === -1) throw new Error("Order not found");
-      
-     
-      orders[orderIndex] = { ...orders[orderIndex], status };
-      return orders[orderIndex];
-    },
-    
-    
-    bulkUpdateStatus: (_, { ids, status }) => {
-      orders = orders.map(order => {
-        if (ids.includes(order.id)) {
-          return { ...order, status };
-        }
-        return order;
-      });
-      return true;
-    }
   },
 };
 
@@ -292,8 +174,16 @@ const server = new ApolloServer({
   resolvers,
 });
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
+try {
+  await AppDataSource.initialize();
+  console.log("✅ TypeORM connected to Postgres");
 
-console.log(`🚀 Server ready at: ${url}`);
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+  });
+
+  console.log(`🚀 Server ready at: ${url}`);
+} catch (err) {
+  console.error("❌ Failed to initialize DB or start server:", err);
+  process.exit(1);
+}
