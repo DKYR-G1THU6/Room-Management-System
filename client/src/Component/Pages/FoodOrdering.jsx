@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import React, { useMemo, useState } from "react";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import {
   Box,
   Typography,
@@ -16,26 +16,25 @@ import {
   IconButton,
   TextField,
   InputAdornment,
-  Checkbox
-} from '@mui/material';
-import { styled } from '@mui/system';
-import '../CSS/FoodOrdering.css';
-import CheckIcon from '@mui/icons-material/Check';
-import SendIcon from '@mui/icons-material/Send';
-import CloseIcon from '@mui/icons-material/Close';
-import SearchIcon from '@mui/icons-material/Search';
-import SortIcon from '@mui/icons-material/Sort';
+  Checkbox,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import "../CSS/FoodOrdering.css";
+import CheckIcon from "@mui/icons-material/Check";
+import SendIcon from "@mui/icons-material/Send";
+import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import SortIcon from "@mui/icons-material/Sort";
 
+const drawerWidth = 330;
 
-const drawerWidth = 330; 
-
-const Main = styled('main', {
-  shouldForwardProp: (prop) => prop !== 'open',
+const Main = styled("main", {
+  shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
   marginLeft: open ? `${drawerWidth}px` : 0,
-  transition: theme.transitions.create(['margin'], {
+  transition: theme.transitions.create(["margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
@@ -71,59 +70,65 @@ const BULK_UPDATE_STATUS = gql`
   }
 `;
 
-// Map order status to a small colored Chip
 const getStatusChip = (status) => {
   const map = {
-    pending: { color: 'warning', label: 'Pending' },
-    preparing: { color: 'info', label: 'Preparing' },
-    delivered: { color: 'success', label: 'Delivered' },
-    cancelled: { color: 'error', label: 'Cancelled' },
-    'In Progress': { color: 'info', label: 'In Progress' },
-    Delivering: { color: 'primary', label: 'Delivering' },
-    Canceled: { color: 'error', label: 'Canceled' },
+    pending: { color: "warning", label: "Pending" },
+    preparing: { color: "info", label: "Preparing" },
+    delivered: { color: "success", label: "Delivered" },
+    cancelled: { color: "error", label: "Cancelled" },
+    "In Progress": { color: "info", label: "In Progress" },
+    Delivering: { color: "primary", label: "Delivering" },
+    Canceled: { color: "error", label: "Canceled" },
   };
-  const key = status in map ? status : String(status || '').toLowerCase();
-  const config = map[status] || map[key] || { color: 'default', label: status };
+  const key = status in map ? status : String(status || "").toLowerCase();
+  const config = map[status] || map[key] || { color: "default", label: status };
   return <Chip label={config.label} color={config.color} size="small" />;
 };
 
 const FoodOrdering = ({ drawerOpen }) => {
-  // searchTerm: 提交后的搜索词（用于触发查询）
-  // searchInput: 输入框里的即时内容（按回车/按钮后再提交到 searchTerm）
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [sortField, setSortField] = useState('room');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [sortField, setSortField] = useState("room");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedOrders, setSelectedOrders] = useState([]);
 
   const { loading, error, data, refetch } = useQuery(GET_ORDERS, {
-    variables: { 
-      search: searchTerm, 
-      sortBy: sortField, 
-      sortDirection: sortDirection 
+    variables: {
+      search: searchTerm,
+      sortBy: sortField,
+      sortDirection: sortDirection,
     },
-    fetchPolicy: 'cache-and-network', 
+    fetchPolicy: "cache-and-network",
   });
 
   const orders = data?.orders || [];
-  
+
   const [updateStatus] = useMutation(UPDATE_ORDER_STATUS, {
-   
-    refetchQueries: [{ query: GET_ORDERS, variables: { 
-      search: searchTerm, 
-      sortBy: sortField, 
-      sortDirection: sortDirection 
-    } }],
+    refetchQueries: [
+      {
+        query: GET_ORDERS,
+        variables: {
+          search: searchTerm,
+          sortBy: sortField,
+          sortDirection: sortDirection,
+        },
+      },
+    ],
   });
-  
+
   const [bulkUpdate] = useMutation(BULK_UPDATE_STATUS, {
-    refetchQueries: [{ query: GET_ORDERS, variables: { 
-      search: searchTerm, 
-      sortBy: sortField, 
-      sortDirection: sortDirection 
-    } }],
+    refetchQueries: [
+      {
+        query: GET_ORDERS,
+        variables: {
+          search: searchTerm,
+          sortBy: sortField,
+          sortDirection: sortDirection,
+        },
+      },
+    ],
   });
 
   const commitSearch = () => {
@@ -133,10 +138,10 @@ const FoodOrdering = ({ drawerOpen }) => {
 
   const handleSort = (field) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -144,8 +149,7 @@ const FoodOrdering = ({ drawerOpen }) => {
     if (loading || error || !data || !data.orders) {
       return [];
     }
-    return data.orders; 
-   
+    return data.orders;
   }, [loading, error, data]);
 
   const handleChangePage = (event, newPage) => {
@@ -158,9 +162,9 @@ const FoodOrdering = ({ drawerOpen }) => {
   };
 
   const handleSelectOrder = (orderId) => {
-    setSelectedOrders(prev => {
+    setSelectedOrders((prev) => {
       if (prev.includes(orderId)) {
-        return prev.filter(id => id !== orderId);
+        return prev.filter((id) => id !== orderId);
       } else {
         return [...prev, orderId];
       }
@@ -169,7 +173,7 @@ const FoodOrdering = ({ drawerOpen }) => {
 
   const handleSelectAllOrders = (event) => {
     if (event.target.checked) {
-      setSelectedOrders(filteredAndSortedOrders.map(order => order.id));
+      setSelectedOrders(filteredAndSortedOrders.map((order) => order.id));
     } else {
       setSelectedOrders([]);
     }
@@ -177,14 +181,14 @@ const FoodOrdering = ({ drawerOpen }) => {
 
   const handleUpdateStatus = (id, newStatus) => {
     updateStatus({
-        variables: { id: String(id), status: newStatus },
+      variables: { id: String(id), status: newStatus },
     });
-};
+  };
 
   if (loading) {
     return (
-      <Main open={drawerOpen} sx={{ p: '0 !important' }}>
-        <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Main open={drawerOpen} sx={{ p: "0 !important" }}>
+        <Box sx={{ p: 4, textAlign: "center" }}>
           <Typography variant="h6">Loading Orders...</Typography>
         </Box>
       </Main>
@@ -193,56 +197,66 @@ const FoodOrdering = ({ drawerOpen }) => {
 
   if (error) {
     return (
-       <Main open={drawerOpen} sx={{ p: '0 !important' }}>
-        <Box sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="error">Error loading orders: {error.message}</Typography>
-         </Box>
+      <Main open={drawerOpen} sx={{ p: "0 !important" }}>
+        <Box sx={{ p: 4, textAlign: "center" }}>
+          <Typography variant="h6" color="error">
+            Error loading orders: {error.message}
+          </Typography>
+        </Box>
       </Main>
-     );
+    );
   }
 
   return (
-    <Main open={drawerOpen} sx={{ p: '0 !important' }}>
-      <Box sx={{ 
-        width: '70vw', 
-        height: '100vh', 
-        display: 'flex', 
-        flexDirection: 'column',
-        backgroundColor: 'background.default',
-        boxShadow: 3,
-      }}>
-        <Box sx={{ 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          borderBottom: 1, 
-          borderColor: 'divider',
-          backgroundColor: 'background.paper'
-        }}>
-          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+    <Main open={drawerOpen} sx={{ p: "0 !important" }}>
+      <Box
+        sx={{
+          width: "70vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "background.default",
+          boxShadow: 3,
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderBottom: 1,
+            borderColor: "divider",
+            backgroundColor: "background.paper",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Food Order
           </Typography>
         </Box>
 
-        <Box sx={{ 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          gap: 2,
-          backgroundColor: 'background.paper',
-          borderBottom: 1,
-          borderColor: 'divider'
-        }}>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 2,
+            backgroundColor: "background.paper",
+            borderBottom: 1,
+            borderColor: "divider",
+          }}
+        >
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <TextField
               variant="outlined"
               size="small"
               placeholder="Search room number or food..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') commitSearch(); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") commitSearch();
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -252,11 +266,7 @@ const FoodOrdering = ({ drawerOpen }) => {
               }}
               sx={{ width: 300 }}
             />
-            <Button
-              variant="contained"
-              size="small"
-              onClick={commitSearch}
-            >
+            <Button variant="contained" size="small" onClick={commitSearch}>
               Search
             </Button>
           </Box>
@@ -269,33 +279,47 @@ const FoodOrdering = ({ drawerOpen }) => {
           >
             Clear Selection ({selectedOrders.length})
           </Button>
-
         </Box>
 
-       
-
-        <Box sx={{ flex: 1, overflow: 'auto', backgroundColor: 'background.paper', m: 2, borderRadius: 1 }}>
+        <Box
+          sx={{
+            flex: 1,
+            overflow: "auto",
+            backgroundColor: "background.paper",
+            m: 2,
+            borderRadius: 1,
+          }}
+        >
           <TableContainer>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      indeterminate={selectedOrders.length > 0 && selectedOrders.length < filteredAndSortedOrders.length}
-                      checked={selectedOrders.length > 0 && selectedOrders.length === filteredAndSortedOrders.length}
+                      indeterminate={
+                        selectedOrders.length > 0 &&
+                        selectedOrders.length < filteredAndSortedOrders.length
+                      }
+                      checked={
+                        selectedOrders.length > 0 &&
+                        selectedOrders.length === filteredAndSortedOrders.length
+                      }
                       onChange={handleSelectAllOrders}
                     />
                   </TableCell>
                   <TableCell>
                     Room No
-                    <IconButton size="small" onClick={() => handleSort('room')}>
+                    <IconButton size="small" onClick={() => handleSort("room")}>
                       <SortIcon />
                     </IconButton>
                   </TableCell>
                   <TableCell>Order Details</TableCell>
                   <TableCell>
                     Total
-                    <IconButton size="small" onClick={() => handleSort('total')}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleSort("total")}
+                    >
                       <SortIcon />
                     </IconButton>
                   </TableCell>
@@ -307,12 +331,12 @@ const FoodOrdering = ({ drawerOpen }) => {
                 {filteredAndSortedOrders
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((order) => (
-                    <TableRow 
-                      key={order.id} 
+                    <TableRow
+                      key={order.id}
                       hover
                       selected={selectedOrders.includes(order.id)}
                       onClick={() => handleSelectOrder(order.id)}
-                      sx={{ cursor: 'pointer' }}
+                      sx={{ cursor: "pointer" }}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox checked={selectedOrders.includes(order.id)} />
@@ -333,12 +357,19 @@ const FoodOrdering = ({ drawerOpen }) => {
                       </TableCell>
                       <TableCell>
                         <Typography color="primary" sx={{ fontWeight: 500 }}>
-                          ${order.items.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
+                          $
+                          {order.items
+                            .reduce((sum, item) => sum + item.price, 0)
+                            .toFixed(2)}
                         </Typography>
                       </TableCell>
                       <TableCell>{getStatusChip(order.status)}</TableCell>
                       <TableCell align="right">
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          justifyContent="flex-end"
+                        >
                           <Button
                             variant="contained"
                             size="small"
@@ -346,9 +377,8 @@ const FoodOrdering = ({ drawerOpen }) => {
                             startIcon={<CheckIcon />}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleUpdateStatus(order.id, 'In Progress'); 
-                            }
-                            }
+                              handleUpdateStatus(order.id, "In Progress");
+                            }}
                           >
                             Received
                           </Button>
@@ -359,7 +389,7 @@ const FoodOrdering = ({ drawerOpen }) => {
                             startIcon={<SendIcon />}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleUpdateStatus(order.id, 'Delivering');
+                              handleUpdateStatus(order.id, "Delivering");
                             }}
                           >
                             Deliver
@@ -371,7 +401,7 @@ const FoodOrdering = ({ drawerOpen }) => {
                             startIcon={<CloseIcon />}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleUpdateStatus(order.id, 'Canceled');
+                              handleUpdateStatus(order.id, "Canceled");
                             }}
                           >
                             Cancel
@@ -384,12 +414,14 @@ const FoodOrdering = ({ drawerOpen }) => {
             </Table>
           </TableContainer>
         </Box>
-        
-        <Box sx={{ 
-          borderTop: 1, 
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-        }}>
+
+        <Box
+          sx={{
+            borderTop: 1,
+            borderColor: "divider",
+            backgroundColor: "background.paper",
+          }}
+        >
           <TablePagination
             component="div"
             count={filteredAndSortedOrders.length}
@@ -399,7 +431,9 @@ const FoodOrdering = ({ drawerOpen }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             rowsPerPageOptions={[10, 25, 50]}
             labelRowsPerPage="Rows Per Page"
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}-${to} of ${count}`
+            }
           />
         </Box>
       </Box>

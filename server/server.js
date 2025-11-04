@@ -6,7 +6,6 @@ import { In } from "typeorm";
 import { AppDataSource } from "./data-source.js";
 dotenv.config();
 
-
 const typeDefs = `
   type Room {
     id: ID!
@@ -44,13 +43,12 @@ const typeDefs = `
   }
 `;
 
-
 const resolvers = {
   Query: {
     rooms: async () => {
       const repo = AppDataSource.getRepository("Room");
       const rows = await repo.find({ order: { id: "ASC" } });
-      return rows.map(r => ({
+      return rows.map((r) => ({
         id: String(r.id),
         RoomNo: r.roomNo,
         Location: r.location,
@@ -62,7 +60,7 @@ const resolvers = {
       const itemRepo = AppDataSource.getRepository("OrderItem");
 
       const orders = await orderRepo.find();
-      const orderIds = orders.map(o => o.id);
+      const orderIds = orders.map((o) => o.id);
       const items = orderIds.length
         ? await itemRepo.find({ where: { order_id: In(orderIds) } })
         : [];
@@ -75,18 +73,23 @@ const resolvers = {
         itemsByOrder.set(it.order_id, list);
       }
 
-      let result = orders.map(o => ({
+      let result = orders.map((o) => ({
         id: String(o.id),
         room: String(o.room ?? ""),
         items: itemsByOrder.get(o.id) ?? [],
         status: o.status,
-        timestamp: o.timestamp instanceof Date ? o.timestamp.toISOString() : String(o.timestamp),
+        timestamp:
+          o.timestamp instanceof Date
+            ? o.timestamp.toISOString()
+            : String(o.timestamp),
       }));
 
       if (search) {
         const s = String(search).toLowerCase();
-        result = result.filter(ord =>
-          String(ord.room).toLowerCase().includes(s) || ord.items.some(it => (it.name || "").toLowerCase().includes(s))
+        result = result.filter(
+          (ord) =>
+            String(ord.room).toLowerCase().includes(s) ||
+            ord.items.some((it) => (it.name || "").toLowerCase().includes(s))
         );
       }
 
@@ -96,8 +99,11 @@ const resolvers = {
           if (sortBy === "room") {
             const roomA = String(a.room ?? "");
             const roomB = String(b.room ?? "");
-           
-            cmp = roomA.localeCompare(roomB, undefined, { numeric: true, sensitivity: "base" });
+
+            cmp = roomA.localeCompare(roomB, undefined, {
+              numeric: true,
+              sensitivity: "base",
+            });
           } else if (sortBy === "time") {
             cmp = new Date(a.timestamp) - new Date(b.timestamp);
           } else if (sortBy === "total") {
@@ -116,23 +122,41 @@ const resolvers = {
   Mutation: {
     addRoom: async (_p, { RoomNo, Location, Description }) => {
       const repo = AppDataSource.getRepository("Room");
-      const entity = repo.create({ roomNo: String(RoomNo), location: Location, description: Description });
+      const entity = repo.create({
+        roomNo: String(RoomNo),
+        location: Location,
+        description: Description,
+      });
       const saved = await repo.save(entity);
-      return { id: String(saved.id), RoomNo: saved.roomNo, Location: saved.location, Description: saved.description ?? "" };
+      return {
+        id: String(saved.id),
+        RoomNo: saved.roomNo,
+        Location: saved.location,
+        Description: saved.description ?? "",
+      };
     },
 
     updateRoom: async (_p, { id, RoomNo, Location, Description }) => {
       const repo = AppDataSource.getRepository("Room");
       const key = { id: Number(id) };
-      await repo.update(key, { roomNo: String(RoomNo), location: Location, description: Description });
+      await repo.update(key, {
+        roomNo: String(RoomNo),
+        location: Location,
+        description: Description,
+      });
       const updated = await repo.findOne({ where: key });
       if (!updated) throw new Error("Room not found");
-      return { id: String(updated.id), RoomNo: updated.roomNo, Location: updated.location, Description: updated.description ?? "" };
+      return {
+        id: String(updated.id),
+        RoomNo: updated.roomNo,
+        Location: updated.location,
+        Description: updated.description ?? "",
+      };
     },
 
     deleteRooms: async (_p, { ids }) => {
       const repo = AppDataSource.getRepository("Room");
-      const numericIds = ids.map(i => Number(i));
+      const numericIds = ids.map((i) => Number(i));
       await repo.delete(numericIds);
       return true;
     },
@@ -149,16 +173,23 @@ const resolvers = {
         id: String(o.id),
         room: o.room,
         status: o.status,
-        timestamp: o.timestamp instanceof Date ? o.timestamp.toISOString() : String(o.timestamp),
-        items: its.map(it => ({ name: it.item_name, price: parseFloat(it.price) })),
+        timestamp:
+          o.timestamp instanceof Date
+            ? o.timestamp.toISOString()
+            : String(o.timestamp),
+        items: its.map((it) => ({
+          name: it.item_name,
+          price: parseFloat(it.price),
+        })),
       };
     },
 
     bulkUpdateStatus: async (_p, { ids, status }) => {
       const orderRepo = AppDataSource.getRepository("Order");
-      const numericIds = ids.map(i => Number(i));
+      const numericIds = ids.map((i) => Number(i));
       if (numericIds.length === 0) return true;
-      await orderRepo.createQueryBuilder()
+      await orderRepo
+        .createQueryBuilder()
         .update()
         .set({ status })
         .whereInIds(numericIds)
@@ -167,7 +198,6 @@ const resolvers = {
     },
   },
 };
-
 
 const server = new ApolloServer({
   typeDefs,

@@ -1,6 +1,5 @@
 import { EntitySchema } from "typeorm";
 
-
 export default new EntitySchema({
   name: "Order",
   tableName: "orders",
